@@ -1,4 +1,6 @@
 from random import shuffle
+import numpy as np
+import pandas as pd
 
 class Player():
     """docstring for Player."""
@@ -17,7 +19,8 @@ class Player():
 
 class Game():
     """docstring for Game."""
-    def __init__(self):
+    def __init__(self, war_anti):
+        self.war_anti = war_anti
         self.deck = [i for i in range(1,14) for j in range(0,4)]
         shuffle(self.deck)
         self.p0_start = self.deck[:26]
@@ -34,7 +37,7 @@ class Game():
             self.winner = 1
             return()
         elif card_1 == None:
-            self.winner = 1
+            self.winner = 0
             return()
         pot += [card_0, card_1]
         if card_0 > card_1:
@@ -42,10 +45,14 @@ class Game():
         elif card_0 < card_1:
             self.player_1.add_winnings(pot)
         elif card_0 == card_1:
-            self.war(pot, 2)
+            self.war(pot, self.war_anti)
     def play(self):
         while self.winner == None:
             self.num_turns += 1
             self.war([], 0)
 
-g = [Game() for i in range(0,10000)]
+g = [Game(2) for i in range(0,10000)]
+[i.play() for i in g]
+all = [(i.winner, np.mean(i.p0_start), np.mean(i.p1_start), i.num_turns) for i in g]
+all_df = pd.DataFrame.from_records(all)
+all_df.to_csv('results.csv')
