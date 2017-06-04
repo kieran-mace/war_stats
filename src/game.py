@@ -1,14 +1,17 @@
+# ---- classes ----
+
 from random import shuffle
 
-
 class Player():
-    """docstring for Player."""
+    """Player is the class that represents a player. Each player has a hand of cards. The class also includes getting cards from a players hand, and adding the winnings to the bottom of the players hand"""
     def __init__(self, hand, name):
         self.hand = hand[:]
         self.name = name
+    # Once a player wins a battle, they need to add their winnings to the bottom of their hand. Since the rules don't seem to indicate their order, I explicitly shuffle the winnings before adding them.
     def add_winnings(self, cards):
         shuffle(cards)
         self.hand += cards
+    # Method to get next card. If the player has run out of cards, this method returns None, which indicates to the Game class that the game is over and the player has lost. 
     def get_next_card(self):
         if len(self.hand)==0:
             return(None)

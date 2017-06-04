@@ -1,0 +1,72 @@
+---
+title: "Analysis of War - the card game"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Introduciton
+
+Have you ever played War? have you ever wondered __When will this be over!?__
+
+Well I have, and after a weekend of being forced to play with my little cousin, I decided enough is enough. Lets do some simulation and some data analysis to answer some basic questions:
+
+* How long does the average game take
+* How does the initial hand affect your winning percentage?
+    * How often will I win if I have all the aces?
+    * How often will I win depending on the average hand strength?
+* How does the anti size affect game duration?
+
+## Rules
+
+# Simulation in python
+## Setup
+
+Since I am not too used to dealing with numerical simulations of card games, I'm going to set up some classes in python. Once the simulations are done I'll import the data into R to do some analysis. 
+
+Here are the two classes I set up:
+```{r cache=FALSE, echo=FALSE}
+knitr::read_chunk('game.py')
+knitr::read_chunk('generate.py')
+```
+
+
+```{python classes, eval=FALSE}
+```
+## Simulation
+
+Now lets run the simulations:
+
+```{python, sim, eval=FALSE}
+```
+# Running the analysis in R
+## Setup
+
+First lets load up packages and set up the data from python
+
+```{r load_lib, message=FALSE}
+library(dplyr)
+library(ggplot2)
+```
+
+```{r load_data}
+results_paths = list.files('../output', 'results_[0-9]+.csv', full.names = T)
+results = do.call(rbind, lapply(results_paths, read.csv))
+
+colnames(results) = c('war_anti', 'winner', 'num_turns','player0_mean', paste0("player0_", c(as.character(2:10), 'J', 'Q', 'K', 'A'),'s'))
+```
+## Analysis
+
+Lets take a look at the data:
+
+```{r}
+head(results)
+```
+Now lets plot the data
+
+```{r plot}
+results %>% ggplot(aes(x =factor(winner), y=player0_mean)) + geom_boxplot() + facet_wrap(~war_anti)
+```
+

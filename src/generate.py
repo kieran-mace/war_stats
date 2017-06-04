@@ -1,9 +1,12 @@
+# ---- sim ----
+
 import numpy as np
 import pandas as pd
 from game import *
 
-g = [Game(2) for i in range(0,10000)]
-[i.play() for i in g]
-all = [(i.winner, np.mean(i.p0_start), np.mean(i.p1_start), i.num_turns) for i in g]
-all_df = pd.DataFrame.from_records(all)
-all_df.to_csv('results.csv')
+for anti in range(0,11):
+    games = [Game(anti) for i in range(0,10000)]
+    [g.play() for g in games]
+    all = [[g.war_anti, g.winner, g.num_turns, np.mean(g.p0_start)] + [g.p0_start.count(c) for c in range(1,14)] for g in games]
+    all_df = pd.DataFrame.from_records(all)
+    all_df.to_csv('../output/results_' + str(anti) + '.csv', index = False)
