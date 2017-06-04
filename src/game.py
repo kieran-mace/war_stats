@@ -20,46 +20,32 @@ class Game():
     def __init__(self):
         self.deck = [i for i in range(1,14) for j in range(0,4)]
         shuffle(self.deck)
-        self.p1_start = self.deck[:26]
-        self.p2_start = self.deck[26:]
+        self.p0_start = self.deck[:26]
+        self.p1_start = self.deck[26:]
+        self.player_0 = Player(self.p0_start, "Player 0")
         self.player_1 = Player(self.p1_start, "Player 1")
-        self.player_2 = Player(self.p2_start, "Player 2")
         self.winner = None
         self.num_turns = 0
     def war(self, pot, extra_cards):
-        pot += [self.player_1.get_next_card() for i in range(0,extra_cards)] +
-        [self.player_2.get_next_card() for i in range(0,extra_cards)]
+        pot += [self.player_0.get_next_card() for i in range(0,extra_cards)] + [self.player_1.get_next_card() for i in range(0,extra_cards)]
+        card_0 = self.player_0.get_next_card()
         card_1 = self.player_1.get_next_card()
-        card_2 = self.player_2.get_next_card()
-        if card_1 == None:
-            self.winner = 0
-            return()
-        elif card_2 == None:
+        if card_0 == None:
             self.winner = 1
             return()
-        pot += [card_1, card_2]
-        if card_1 > card_2:
+        elif card_1 == None:
+            self.winner = 1
+            return()
+        pot += [card_0, card_1]
+        if card_0 > card_1:
+            self.player_0.add_winnings(pot)
+        elif card_0 < card_1:
             self.player_1.add_winnings(pot)
-        elif card_1 < card_2:
-            self.player_2.add_winnings(pot)
-        elif card_1 == card_2:
+        elif card_0 == card_1:
             self.war(pot, 2)
     def play(self):
         while self.winner == None:
-            card_1 = self.player_1.get_next_card()
-            card_2 = self.player_2.get_next_card()
-            if card_1 == None:
-                self.winner = 0
-                break
-            elif card_2 == None:
-                self.winner = 1
-                break
             self.num_turns += 1
-            if card_1 > card_2:
-                self.player_1.add_winnings([card_1, card_2])
-            elif card_1 < card_2:
-                self.player_2.add_winnings([card_1, card_2])
-            elif card_1 == card_2:
-                self.war([card_1, card_2])
+            self.war([], 0)
 
 g = [Game() for i in range(0,10000)]
